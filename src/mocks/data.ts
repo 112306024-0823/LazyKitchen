@@ -1,5 +1,5 @@
 // src/mocks/data.ts - 模擬資料用於開發與Demo階段
-import type { UserProfile, Ingredient, Recipe, RecipeIngredient, RecipeStep, Comment, CookingTip } from '../types';
+import type { UserProfile, Ingredient, Recipe, Comment, CookingTip } from '../types';
 
 // 模擬用戶設定
 export const mockUserProfile: UserProfile = {

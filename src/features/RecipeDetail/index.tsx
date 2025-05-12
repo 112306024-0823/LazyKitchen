@@ -2,7 +2,7 @@
 // RecipeDetail 功能模組進入點 
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import type { Recipe, RecipeStep } from '../../types';
+import type { Recipe } from '../../types';
 import { mockRecipes } from '../../mocks/data';
 
 // 麵包屑元件
@@ -299,32 +299,35 @@ const CommunitySection = ({ recipe }: { recipe: Recipe }) => (
 );
 
 // 相關食譜
-const RelatedRecipes = ({ recipe }: { recipe: Recipe }) => (
+const RelatedRecipes = () => (
   <div className="mt-10">
-    <h2 className="text-2xl font-bold text-gray-800 mb-4">你可能也喜歡</h2>
+    <h2 className="text-2xl font-bold text-gray-800 mb-4">相關食譜</h2>
     
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      {mockRecipes.slice(0, 3).map((relatedRecipe) => (
-        <div key={relatedRecipe.id} className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-          <div className="aspect-video overflow-hidden">
-            <img 
-              src={relatedRecipe.imageUrl} 
-              alt={relatedRecipe.title} 
-              className="w-full h-full object-cover"
-            />
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      {/* 由於實際相關食譜數據需要後端處理，這裡使用模擬數據展示UI */}
+      {mockRecipes.slice(0, 3).map(relatedRecipe => (
+        <Link 
+          key={relatedRecipe.id} 
+          to={`/recipe/${relatedRecipe.id}`}
+          className="block bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+        >
+          <div className="aspect-w-16 aspect-h-9">
+            <img src={relatedRecipe.imageUrl} alt={relatedRecipe.title} className="w-full h-full object-cover" />
           </div>
           <div className="p-4">
-            <h3 className="font-semibold text-lg text-gray-800 mb-2">{relatedRecipe.title}</h3>
-            <div className="flex items-center text-sm text-gray-500">
-              <div className="flex items-center">
-                <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <h3 className="font-medium text-gray-800">{relatedRecipe.title}</h3>
+            <div className="mt-2 flex items-center text-sm text-gray-500">
+              <span className="flex items-center">
+                <svg className="w-4 h-4 mr-1 text-cherry-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                 </svg>
-                <span>{relatedRecipe.prepTime + relatedRecipe.cookTime} 分鐘</span>
-              </div>
+                {relatedRecipe.communityStats?.likes ? `${4 + (relatedRecipe.communityStats.likes % 10) / 10}` : '4.5'}
+              </span>
+              <span className="mx-2">•</span>
+              <span>{relatedRecipe.prepTime + relatedRecipe.cookTime} 分鐘</span>
             </div>
           </div>
-        </div>
+        </Link>
       ))}
     </div>
   </div>
@@ -393,7 +396,7 @@ const RecipeDetailPage: React.FC = () => {
       <IngredientsList recipe={recipe} />
       <CookingSteps recipe={recipe} />
       <CommunitySection recipe={recipe} />
-      <RelatedRecipes recipe={recipe} />
+      <RelatedRecipes />
       
       {/* 回到頂部按鈕 */}
       <div className="text-center mt-12">

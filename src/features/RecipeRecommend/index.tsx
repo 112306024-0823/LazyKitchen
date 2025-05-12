@@ -1,6 +1,6 @@
 // src/features/RecipeRecommend/index.tsx
 // RecipeRecommend 功能模組進入點 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import RecipeCard from './RecipeCard';
 import { mockRecipes } from '../../mocks/data';
 import type { Recipe } from '../../types';
@@ -35,11 +35,6 @@ const RecipeRecommendPage: React.FC = () => {
   const filteredRecipes = activeTag 
     ? recipes.filter(recipe => recipe.tags.includes(activeTag))
     : recipes;
-  
-  // 所有可用標籤
-  const allTags = Array.from(
-    new Set(recipes.flatMap(recipe => recipe.tags))
-  );
   
   // 推薦標籤（熱門、季節性等）
   const recommendedTags = [
