@@ -1,4 +1,15 @@
-# React + TypeScript + Vite
+# 懶人食代 (Lazy Kitchen)
+
+智能廚房助手Web應用，透過AI技術幫助用戶根據冰箱現有食材推薦食譜。
+
+## 技術堆疊
+
+- React + TypeScript
+- Vite
+- TailwindCSS
+- PWA 支援
+
+## React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
