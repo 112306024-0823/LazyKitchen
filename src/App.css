@@ -1,0 +1,437 @@
+#root {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0 auto;
+  text-align: center;
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(253, 224, 71, 0.03) 0%, transparent 20%),
+    radial-gradient(circle at 90% 30%, rgba(220, 38, 38, 0.03) 0%, transparent 20%),
+    radial-gradient(circle at 30% 70%, rgba(253, 224, 71, 0.03) 0%, transparent 20%),
+    radial-gradient(circle at 80% 80%, rgba(220, 38, 38, 0.03) 0%, transparent 20%);
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #F87171aa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #FACC15aa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+/* 全局共用樣式 */
+
+/* 文本截斷 */
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* 平滑滾動 */
+html { 
+  scroll-behavior: smooth;
+}
+
+/* 移動設備適配 */
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overscroll-behavior-y: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* 全屏容器 */
+.fullscreen-container {
+  width: 100%;
+  max-width: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* 側邊導覽列 */
+.side-drawer {
+  position: fixed;
+  top: 0;
+  right: -300px;
+  width: 300px;
+  height: 100vh;
+  background-color: white;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+  transition: right 0.3s ease-in-out;
+  z-index: 1000;
+  overflow-y: auto;
+}
+
+.side-drawer.open {
+  right: 0;
+}
+
+.side-drawer-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+}
+
+.side-drawer-backdrop.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* 焦點輪廓控制 */
+.focus-ring:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.5);
+}
+
+/* 漸變背景 */
+.bg-gradient-primary {
+  background: linear-gradient(135deg, var(--color-primary) 0%, #B91C1C 100%);
+}
+
+.bg-gradient-secondary {
+  background: linear-gradient(135deg, var(--color-secondary) 0%, #EAB308 100%);
+}
+
+/* 麵包屑導航裝飾 */
+.breadcrumb-item {
+  position: relative;
+  padding-right: 24px;
+}
+
+.breadcrumb-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  background-color: #FDE047;
+  border-radius: 50%;
+}
+
+/* 食物裝飾 */
+.food-decoration {
+  position: relative;
+  z-index: 1;
+}
+
+.food-decoration.bread::before {
+  content: '';
+  position: absolute;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' width='20' height='20' fill='%23F8E3A3' opacity='0.7'%3E%3Cpath d='M50 0 C60 25, 80 25, 100 25 L100 75 C80 75, 60 75, 50 100 C40 75, 20 75, 0 75 L0 25 C20 25, 40 25, 50 0'/%3E%3C/svg%3E");
+  width: 80px;
+  height: 80px;
+  top: -40px;
+  right: -10px;
+  z-index: -1;
+  transform: rotate(20deg);
+}
+
+.food-decoration.carrot::after {
+  content: '';
+  position: absolute;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' width='24' height='24' fill='%23F97316' opacity='0.6'%3E%3Cpath d='M50,0 L60,40 L100,50 L60,60 L50,100 L40,60 L0,50 L40,40 Z'/%3E%3C/svg%3E");
+  width: 72px;
+  height: 72px;
+  bottom: -20px;
+  left: -20px;
+  z-index: -1;
+  transform: rotate(-15deg);
+}
+
+.food-decoration.rice::before {
+  content: '';
+  position: absolute;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' width='18' height='18' fill='%23F97316' opacity='0.2'%3E%3Ccircle cx='50' cy='50' r='40'/%3E%3C/svg%3E");
+  width: 90px;
+  height: 90px;
+  top: -30px;
+  right: -30px;
+  z-index: -1;
+}
+
+.food-decoration.rice::after {
+  content: '';
+  position: absolute;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' width='14' height='14' fill='%23F97316' opacity='0.2'%3E%3Ccircle cx='50' cy='50' r='40'/%3E%3C/svg%3E");
+  width: 60px;
+  height: 60px;
+  bottom: -20px;
+  left: -20px;
+  z-index: -1;
+}
+
+/* 頁面轉場效果 */
+.page-transition-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.page-transition-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 200ms, transform 200ms;
+}
+
+.page-transition-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.page-transition-exit-active {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 200ms, transform 200ms;
+}
+
+/* 滾動條美化 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c0c0c0;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a0a0a0;
+}
+
+/* 桌面版導航圖示動畫 */
+@media (min-width: 768px) {
+  header nav svg {
+    transition: transform 0.3s ease;
+  }
+  
+  header nav a:hover svg {
+    transform: scale(1.2);
+  }
+  
+  /* 圖標特殊效果 */
+  header nav a:nth-child(1):hover svg {
+    filter: drop-shadow(0 0 3px rgba(220, 38, 38, 0.6));
+  }
+  
+  header nav a:nth-child(2):hover svg {
+    animation: pulse 1s infinite;
+  }
+  
+  header nav a:nth-child(3):hover svg {
+    animation: wiggle 0.5s ease;
+  }
+  
+  header nav a:nth-child(4):hover svg {
+    transform: translateY(-3px) scale(1.1);
+  }
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-8deg); }
+  75% { transform: rotate(8deg); }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+/* 按鈕烹飪效果 */
+.btn-cooking {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-cooking::before {
+  content: '';
+  position: absolute;
+  top: -10%;
+  left: -10%;
+  width: 120%;
+  height: 120%;
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(253, 224, 71, 0.1),
+    rgba(253, 224, 71, 0.1) 10px,
+    rgba(220, 38, 38, 0.1) 10px,
+    rgba(220, 38, 38, 0.1) 20px
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.btn-cooking:hover::before {
+  opacity: 1;
+  animation: steam 2s infinite;
+}
+
+@keyframes steam {
+  0%, 100% { transform: translateY(0); opacity: 0; }
+  50% { transform: translateY(-10px); opacity: 1; }
+}
+
+/* PWA 底部安全區域支援 */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.mb-safe {
+  margin-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* PWA 全屏模式相關樣式 */
+@media (display-mode: standalone) {
+  body {
+    overscroll-behavior-y: contain;
+  }
+  
+  /* 確保在PWA模式下不會有底部彈性滾動效果 */
+  html {
+    position: fixed;
+    height: 100%;
+    overflow: hidden;
+  }
+  
+  body {
+    overflow: auto;
+    height: 100%;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* 移動設備動畫優化 */
+@media (max-width: 768px) {
+  * {
+    animation-duration: 0.1s !important;
+    transition-duration: 0.1s !important;
+  }
+}
+
+/* 關鍵路徑優化 - 內容加載前的骨架屏 */
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* 自定義元件樣式 */
+.voice-assistant {
+  position: fixed;
+  bottom: 6rem;
+  right: 1.5rem;
+  width: 3.5rem;
+  height: 3.5rem;
+  background-color: var(--color-primary, #DC2626);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  z-index: 50;
+  transition: all 0.2s;
+}
+
+.voice-assistant:hover {
+  transform: scale(1.05);
+  background-color: #B91C1C;
+}
+
+/* Logo樣式 */
+.logo-text {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.logo-text:hover .logo-brand {
+  transform: translateY(-1px);
+  text-shadow: 0 1px 2px rgba(220, 38, 38, 0.2);
+}
+
+.logo-text:hover .logo-sub {
+  letter-spacing: 0.15em;
+}
+
+.logo-sub {
+  transition: all 0.3s ease;
+  letter-spacing: 0.12em;
+}
+
+.logo-shadow {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}

@@ -1,0 +1,87 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* 主色調 */
+  --color-primary: #2F855A; /* 森林綠 */
+  --color-secondary: #F6AD55; /* 蛋黃橘 */
+  --color-background: #F9F9F9; /* 米白 */
+  --color-text: #333333;
+  --color-light-gray: #E2E8F0;
+}
+
+/* 移除原有的預設樣式，改用Tailwind */
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: 'Inter', 'Noto Sans TC', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--color-background);
+  color: var(--color-text);
+}
+
+/* 自定義元件樣式 */
+@layer components {
+  /* 主按鈕 */
+  .btn-primary {
+    @apply px-6 py-3 bg-green-600 text-white rounded-full font-medium transition-all hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 shadow-sm;
+  }
+  
+  /* 次要按鈕 */
+  .btn-secondary {
+    @apply px-6 py-3 border border-gray-300 rounded-full font-medium transition-all hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2;
+  }
+  
+  /* 卡片樣式 */
+  .card {
+    @apply bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all;
+  }
+  
+  /* 標籤樣式 */
+  .tag {
+    @apply px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm;
+  }
+  
+  /* 標籤選中樣式 */
+  .tag-active {
+    @apply px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium;
+  }
+  
+  /* 食材標籤 */
+  .ingredient-chip {
+    @apply bg-green-100 text-green-800 text-sm px-3 py-1 rounded-full flex items-center;
+  }
+  
+  /* 區塊標題 */
+  .section-title {
+    @apply text-xl font-semibold mb-4;
+  }
+  
+  /* 頁面標題 */
+  .page-title {
+    @apply text-2xl font-bold mb-4;
+  }
+  
+  /* 語音助手UI */
+  .voice-assistant {
+    @apply fixed bottom-6 right-6 w-14 h-14 bg-green-600 rounded-full flex items-center justify-center text-white shadow-lg cursor-pointer hover:bg-green-700 transition-all z-50;
+  }
+  
+  /* 語音波形動畫 (占位) */
+  .voice-wave {
+    @apply w-8 h-8 relative;
+  }
+}
+
+/* 響應式調整 */
+@media (max-width: 640px) {
+  .page-title {
+    @apply text-xl;
+  }
+  
+  .section-title {
+    @apply text-lg;
+  }
+}
