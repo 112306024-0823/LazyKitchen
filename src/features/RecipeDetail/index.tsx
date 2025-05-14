@@ -4,17 +4,18 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import type { Recipe } from '../../types';
 import { mockRecipes } from '../../mocks/data';
+import { speakText, stopSpeaking } from '../../services/textToSpeech';
 
 // 麵包屑元件
 const Breadcrumb = ({ recipe }: { recipe: Recipe }) => (
   <div className="flex items-center text-sm text-gray-500 mb-6">
     <div className="breadcrumb-item">
-      <Link to="/" className="hover:text-cherry-500">首頁</Link>
+      <Link to="/" className="hover:text-tangerine-500">首頁</Link>
     </div>
     <div className="breadcrumb-item">
-      <Link to="/recipe-recommend" className="hover:text-cherry-500">食譜推薦</Link>
+      <Link to="/recipe-recommend" className="hover:text-tangerine-500">食譜推薦</Link>
     </div>
-    <div className="breadcrumb-item text-cherry-500 font-medium">
+    <div className="breadcrumb-item text-tangerine-500 font-medium">
       {recipe.title}
     </div>
   </div>
@@ -34,7 +35,7 @@ const RecipeHero = ({ recipe }: { recipe: Recipe }) => (
     <div className="mt-6 md:mt-8">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl md:text-4xl font-bold text-gray-800">{recipe.title}</h1>
-        <button className="text-cherry-500 hover:text-cherry-600 focus:outline-none">
+        <button className="text-tangerine-500 hover:text-tangerine-600 focus:outline-none">
           <svg className="w-8 h-8" fill={recipe.isFavorite ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
           </svg>
@@ -60,7 +61,7 @@ const RecipeHero = ({ recipe }: { recipe: Recipe }) => (
 const RecipeStats = ({ recipe }: { recipe: Recipe }) => (
   <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
     <div className="bg-gray-50 rounded-lg p-4 text-center">
-      <div className="text-cherry-500 mb-1">
+      <div className="text-tangerine-500 mb-1">
         <svg className="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
@@ -69,7 +70,7 @@ const RecipeStats = ({ recipe }: { recipe: Recipe }) => (
       <div className="font-medium">{recipe.prepTime} 分鐘</div>
     </div>
     <div className="bg-gray-50 rounded-lg p-4 text-center">
-      <div className="text-cherry-500 mb-1">
+      <div className="text-tangerine-500 mb-1">
         <svg className="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
         </svg>
@@ -78,7 +79,7 @@ const RecipeStats = ({ recipe }: { recipe: Recipe }) => (
       <div className="font-medium">{recipe.servings} 人份</div>
     </div>
     <div className="bg-gray-50 rounded-lg p-4 text-center">
-      <div className="text-cherry-500 mb-1">
+      <div className="text-tangerine-500 mb-1">
         <svg className="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
         </svg>
@@ -87,7 +88,7 @@ const RecipeStats = ({ recipe }: { recipe: Recipe }) => (
       <div className="font-medium">{recipe.cookTime} 分鐘</div>
     </div>
     <div className="bg-gray-50 rounded-lg p-4 text-center">
-      <div className="text-cherry-500 mb-1">
+      <div className="text-tangerine-500 mb-1">
         <svg className="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
         </svg>
@@ -132,17 +133,41 @@ const IngredientsList = ({ recipe }: { recipe: Recipe }) => (
 // 烹飪步驟
 const CookingSteps = ({ recipe }: { recipe: Recipe }) => {
   const [currentStep, setCurrentStep] = useState<number>(0);
+  const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
+  
+  // 在步驟變化或組件卸載時停止朗讀
+  useEffect(() => {
+    stopSpeaking();
+    setIsSpeaking(false);
+    
+    return () => {
+      stopSpeaking();
+    };
+  }, [currentStep]);
+  
+  // 朗讀當前步驟
+  const handleSpeakStep = () => {
+    if (isSpeaking) {
+      stopSpeaking();
+      setIsSpeaking(false);
+    } else {
+      setIsSpeaking(true);
+      speakText(recipe.steps[currentStep].description, {
+        onEnd: () => setIsSpeaking(false)
+      });
+    }
+  };
   
   return (
     <div className="mt-10 food-decoration carrot">
       <h2 className="text-2xl font-bold text-gray-800 mb-4">步驟</h2>
       
-      <div className="bg-cherry-50 rounded-lg p-6">
+      <div className="bg-tangerine-50 rounded-lg p-6">
         <div className="mb-6 flex justify-between items-center">
           <button 
             onClick={() => setCurrentStep(prev => Math.max(0, prev - 1))}
             disabled={currentStep === 0}
-            className={`p-2 rounded-full ${currentStep === 0 ? 'text-gray-300' : 'text-cherry-500 hover:bg-cherry-100'}`}
+            className={`p-2 rounded-full ${currentStep === 0 ? 'text-gray-300' : 'text-tangerine-500 hover:bg-tangerine-100'}`}
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -150,10 +175,10 @@ const CookingSteps = ({ recipe }: { recipe: Recipe }) => {
           </button>
           
           <div className="text-center">
-            <div className="text-sm text-cherry-600">步驟 {currentStep + 1} / {recipe.steps.length}</div>
-            <div className="w-full bg-cherry-100 h-1 rounded-full mt-2">
+            <div className="text-sm text-tangerine-600">步驟 {currentStep + 1} / {recipe.steps.length}</div>
+            <div className="w-full bg-tangerine-100 h-1 rounded-full mt-2">
               <div 
-                className="bg-cherry-500 h-1 rounded-full transition-all duration-300"
+                className="bg-tangerine-500 h-1 rounded-full transition-all duration-300"
                 style={{ width: `${((currentStep + 1) / recipe.steps.length) * 100}%` }}
               ></div>
             </div>
@@ -162,7 +187,7 @@ const CookingSteps = ({ recipe }: { recipe: Recipe }) => {
           <button 
             onClick={() => setCurrentStep(prev => Math.min(recipe.steps.length - 1, prev + 1))}
             disabled={currentStep === recipe.steps.length - 1}
-            className={`p-2 rounded-full ${currentStep === recipe.steps.length - 1 ? 'text-gray-300' : 'text-cherry-500 hover:bg-cherry-100'}`}
+            className={`p-2 rounded-full ${currentStep === recipe.steps.length - 1 ? 'text-gray-300' : 'text-tangerine-500 hover:bg-tangerine-100'}`}
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -171,8 +196,31 @@ const CookingSteps = ({ recipe }: { recipe: Recipe }) => {
         </div>
         
         <div className="bg-white rounded-lg p-6 shadow-sm">
-          <div className="text-gray-800 mb-4">
-            {recipe.steps[currentStep].description}
+          <div className="flex justify-between items-center mb-4">
+            <div className="text-gray-800">
+              {recipe.steps[currentStep].description}
+            </div>
+            
+            <button 
+              onClick={handleSpeakStep}
+              className={`ml-2 flex-shrink-0 p-2 rounded-full ${
+                isSpeaking 
+                  ? 'bg-red-100 text-red-500 animate-pulse' 
+                  : 'bg-tangerine-100 text-tangerine-500 hover:bg-tangerine-200'
+              }`}
+              aria-label={isSpeaking ? "停止朗讀" : "朗讀步驟"}
+            >
+              {isSpeaking ? (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
+                </svg>
+              ) : (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15.536a5 5 0 001.414 9.9m4.214-4.214a5 5 0 00-7.072 0M3 5a9 9 0 0112.728 0M5.586 15.536L3 18.118m12.728-9.9l2.586-2.586" />
+                </svg>
+              )}
+            </button>
           </div>
           
           {recipe.steps[currentStep].imageUrl && (
@@ -185,16 +233,38 @@ const CookingSteps = ({ recipe }: { recipe: Recipe }) => {
             </div>
           )}
           
-          {recipe.steps[currentStep].timer && (
-            <div className="mt-4 flex items-center justify-center">
-              <button className="flex items-center px-4 py-2 bg-cherry-100 text-cherry-600 rounded-full hover:bg-cherry-200 transition-colors">
+          <div className="mt-4 flex items-center justify-center space-x-3">
+            {recipe.steps[currentStep].timer && (
+              <button className="flex items-center px-4 py-2 bg-tangerine-100 text-tangerine-600 rounded-full hover:bg-tangerine-200 transition-colors">
                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <span>設定 {recipe.steps[currentStep].timer} 秒計時器</span>
               </button>
-            </div>
-          )}
+            )}
+            
+            <button 
+              onClick={handleSpeakStep}
+              className="flex items-center px-4 py-2 bg-tangerine-100 text-tangerine-600 rounded-full hover:bg-tangerine-200 transition-colors"
+            >
+              {isSpeaking ? (
+                <>
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
+                  </svg>
+                  <span>停止朗讀</span>
+                </>
+              ) : (
+                <>
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15.536a5 5 0 001.414 9.9m4.214-4.214a5 5 0 00-7.072 0M3 5a9 9 0 0112.728 0M5.586 15.536L3 18.118m12.728-9.9l2.586-2.586" />
+                  </svg>
+                  <span>朗讀步驟</span>
+                </>
+              )}
+            </button>
+          </div>
         </div>
         
         {/* 步驟導航 */}
@@ -205,9 +275,9 @@ const CookingSteps = ({ recipe }: { recipe: Recipe }) => {
               onClick={() => setCurrentStep(index)}
               className={`w-8 h-8 rounded-full flex items-center justify-center ${
                 index === currentStep 
-                  ? 'bg-cherry-500 text-white' 
+                  ? 'bg-tangerine-500 text-white' 
                   : index < currentStep 
-                    ? 'bg-cherry-200 text-cherry-600' 
+                    ? 'bg-tangerine-200 text-tangerine-600' 
                     : 'bg-gray-200 text-gray-600'
               }`}
             >
@@ -228,7 +298,7 @@ const CommunitySection = ({ recipe }: { recipe: Recipe }) => (
     <div className="bg-gray-50 rounded-lg p-6">
       <div className="flex space-x-6 mb-6">
         <div className="flex flex-col items-center">
-          <button className="w-10 h-10 bg-white rounded-full shadow-sm flex items-center justify-center text-cherry-500 hover:bg-cherry-50">
+          <button className="w-10 h-10 bg-white rounded-full shadow-sm flex items-center justify-center text-tangerine-500 hover:bg-tangerine-50">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
             </svg>
@@ -267,7 +337,7 @@ const CommunitySection = ({ recipe }: { recipe: Recipe }) => (
             <input 
               type="text" 
               placeholder="分享你的烹飪心得..."
-              className="w-full p-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cherry-500 focus:border-transparent" 
+              className="w-full p-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tangerine-500 focus:border-transparent" 
             />
           </div>
         </div>
@@ -275,7 +345,7 @@ const CommunitySection = ({ recipe }: { recipe: Recipe }) => (
         <div className="space-y-4">
           <div className="flex text-center">
             <div className="flex-1 py-3">
-              <button className="text-cherry-500 btn-cooking font-medium inline-flex items-center">
+              <button className="text-tangerine-500 btn-cooking font-medium inline-flex items-center">
                 <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -284,7 +354,7 @@ const CommunitySection = ({ recipe }: { recipe: Recipe }) => (
               </button>
             </div>
             <div className="flex-1 py-3">
-              <button className="text-cherry-500 btn-cooking font-medium inline-flex items-center">
+              <button className="text-tangerine-500 btn-cooking font-medium inline-flex items-center">
                 <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                 </svg>
@@ -318,7 +388,7 @@ const RelatedRecipes = () => (
             <h3 className="font-medium text-gray-800">{relatedRecipe.title}</h3>
             <div className="mt-2 flex items-center text-sm text-gray-500">
               <span className="flex items-center">
-                <svg className="w-4 h-4 mr-1 text-cherry-500" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-4 h-4 mr-1 text-tangerine-500" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                 </svg>
                 {relatedRecipe.communityStats?.likes ? `${4 + (relatedRecipe.communityStats.likes % 10) / 10}` : '4.5'}
@@ -366,7 +436,7 @@ const RecipeDetailPage: React.FC = () => {
     return (
       <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-8">
         <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-cherry-500"></div>
+          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-tangerine-500"></div>
         </div>
       </div>
     );
@@ -379,7 +449,7 @@ const RecipeDetailPage: React.FC = () => {
         <div className="bg-gray-50 p-8 rounded-lg text-center">
           <h2 className="text-2xl font-bold text-gray-800 mb-4">食譜未找到</h2>
           <p className="text-gray-600 mb-6">抱歉，我們找不到您要查看的食譜。</p>
-          <Link to="/recipe-recommend" className="px-6 py-3 bg-cherry-500 text-white rounded-full hover:bg-cherry-600 inline-block">
+          <Link to="/recipe-recommend" className="px-6 py-3 bg-tangerine-500 text-white rounded-full hover:bg-tangerine-600 inline-block">
             回到食譜列表
           </Link>
         </div>
@@ -409,6 +479,13 @@ const RecipeDetailPage: React.FC = () => {
           </svg>
           回到頂部
         </button>
+      </div>
+      
+      {/* 回上一頁按鈕 */}
+      <div className="text-center mt-12 pb-8">
+        <Link to="/recipe-recommend" className="px-6 py-3 bg-tangerine-500 text-white rounded-full hover:bg-tangerine-600 inline-block transition-all shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-tangerine-500 focus:ring-offset-2">
+          返回食譜列表
+        </Link>
       </div>
     </div>
   );

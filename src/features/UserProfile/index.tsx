@@ -9,9 +9,9 @@ import type { UserProfile } from '../../types';
 const Breadcrumb = () => (
   <div className="flex items-center text-sm text-gray-500 mb-6">
     <div className="breadcrumb-item">
-      <Link to="/" className="hover:text-cherry-500">首頁</Link>
+      <Link to="/" className="hover:text-tangerine-500">首頁</Link>
     </div>
-    <div className="breadcrumb-item text-cherry-500 font-medium">
+    <div className="breadcrumb-item text-tangerine-500 font-medium">
       個人設定
     </div>
   </div>
@@ -44,7 +44,7 @@ const UserProfilePage: React.FC = () => {
         <div className="mt-8 text-center">
           <button
             onClick={() => window.location.href = '#/ingredient-input'}
-            className="px-8 py-3 bg-cherry-500 text-white rounded-full hover:bg-cherry-600 focus:outline-none focus:ring-2 focus:ring-cherry-500 shadow-md hover:shadow-lg transition-all btn-cooking"
+            className="px-8 py-3 bg-tangerine-500 text-white rounded-full hover:bg-tangerine-600 focus:outline-none focus:ring-2 focus:ring-tangerine-500 shadow-md hover:shadow-lg transition-all btn-cooking font-medium"
           >
             下一步：進入食材輸入
           </button>

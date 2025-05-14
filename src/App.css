@@ -5,9 +5,9 @@
   text-align: center;
   background-image: 
     radial-gradient(circle at 10% 20%, rgba(253, 224, 71, 0.03) 0%, transparent 20%),
-    radial-gradient(circle at 90% 30%, rgba(220, 38, 38, 0.03) 0%, transparent 20%),
+    radial-gradient(circle at 90% 30%, rgba(249, 115, 22, 0.03) 0%, transparent 20%),
     radial-gradient(circle at 30% 70%, rgba(253, 224, 71, 0.03) 0%, transparent 20%),
-    radial-gradient(circle at 80% 80%, rgba(220, 38, 38, 0.03) 0%, transparent 20%);
+    radial-gradient(circle at 80% 80%, rgba(249, 115, 22, 0.03) 0%, transparent 20%);
 }
 
 .logo {
@@ -17,7 +17,7 @@
   transition: filter 300ms;
 }
 .logo:hover {
-  filter: drop-shadow(0 0 2em #F87171aa);
+  filter: drop-shadow(0 0 2em rgba(249, 115, 22, 0.7));
 }
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #FACC15aa);
@@ -272,7 +272,7 @@ html, body {
   
   /* 圖標特殊效果 */
   header nav a:nth-child(1):hover svg {
-    filter: drop-shadow(0 0 3px rgba(220, 38, 38, 0.6));
+    filter: drop-shadow(0 0 3px rgba(249, 115, 22, 0.6));
   }
   
   header nav a:nth-child(2):hover svg {
@@ -317,8 +317,8 @@ html, body {
     45deg,
     rgba(253, 224, 71, 0.1),
     rgba(253, 224, 71, 0.1) 10px,
-    rgba(220, 38, 38, 0.1) 10px,
-    rgba(220, 38, 38, 0.1) 20px
+    rgba(249, 115, 22, 0.1) 10px,
+    rgba(249, 115, 22, 0.1) 20px
   );
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -395,7 +395,7 @@ html, body {
   right: 1.5rem;
   width: 3.5rem;
   height: 3.5rem;
-  background-color: var(--color-primary, #DC2626);
+  background-color: var(--color-primary, #F97316);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -409,7 +409,7 @@ html, body {
 
 .voice-assistant:hover {
   transform: scale(1.05);
-  background-color: #B91C1C;
+  background-color: #EA580C;
 }
 
 /* Logo樣式 */
@@ -420,7 +420,7 @@ html, body {
 
 .logo-text:hover .logo-brand {
   transform: translateY(-1px);
-  text-shadow: 0 1px 2px rgba(220, 38, 38, 0.2);
+  text-shadow: 0 1px 2px rgba(249, 115, 22, 0.2);
 }
 
 .logo-text:hover .logo-sub {

@@ -52,10 +52,10 @@ const Button: React.FC<ButtonProps> = ({
   
   // 變體樣式
   const variantStyles = {
-    primary: 'bg-cherry-500 hover:bg-cherry-600 active:bg-cherry-700 text-white focus:ring-cherry-500 shadow-sm hover:shadow',
+    primary: 'bg-tangerine-500 hover:bg-tangerine-600 active:bg-tangerine-700 text-white focus:ring-tangerine-500 shadow-sm hover:shadow',
     secondary: 'bg-sunflower-300 hover:bg-sunflower-400 active:bg-sunflower-500 text-gray-800 focus:ring-sunflower-300 shadow-sm hover:shadow',
     outline: 'border border-gray-300 text-gray-700 hover:bg-gray-50 active:bg-gray-100 focus:ring-gray-300',
-    text: 'text-cherry-500 hover:text-cherry-600 hover:bg-cherry-50 active:bg-cherry-100 focus:ring-cherry-500',
+    text: 'text-tangerine-500 hover:text-tangerine-600 hover:bg-tangerine-50 active:bg-tangerine-100 focus:ring-tangerine-500',
     danger: 'bg-red-500 hover:bg-red-600 active:bg-red-700 text-white focus:ring-red-500 shadow-sm hover:shadow',
     success: 'bg-green-500 hover:bg-green-600 active:bg-green-700 text-white focus:ring-green-500 shadow-sm hover:shadow',
   };

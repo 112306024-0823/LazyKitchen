@@ -4,6 +4,7 @@ import React, { useState, useRef } from 'react';
 import IngredientCard from './IngredientCard';
 import { mockIngredients } from '../../mocks/data';
 import type { Ingredient } from '../../types';
+import { recognizeFoodFromImage, simulateFoodRecognition, mapRecognizedIngredientsToLocal } from '../../services/imageRecognition';
 
 const IngredientInputPage: React.FC = () => {
   // 所有可用食材
@@ -46,23 +47,52 @@ const IngredientInputPage: React.FC = () => {
   // 獲取已選擇的食材
   const selectedIngredients = ingredients.filter(item => selectedIngredientIds.includes(item.id));
 
-  // 處理相機上傳（模擬）
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // 處理相機上傳（連接到API）
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
     
     // 顯示處理中狀態
     setProcessing(true);
     
-    // 在實際應用中，這裡會上傳圖片到服務器進行食材辨識
-    // 模擬上傳完成後關閉上傳區域，並隨機選擇3個食材作為「辨識結果」
-    setTimeout(() => {
-      const randomIngredients = [...ingredients]
-        .sort(() => 0.5 - Math.random())
-        .slice(0, 3)
-        .map(item => item.id);
+    try {
+      let result;
       
-      setSelectedIngredientIds(prev => [...new Set([...prev, ...randomIngredients])]);
+      // 根據環境決定使用實際API還是模擬數據
+      if (import.meta.env.DEV && import.meta.env.VITE_USE_MOCK_API === 'true') {
+        // 開發環境使用模擬數據
+        result = await simulateFoodRecognition(ingredients);
+      } else {
+        // 生產環境使用實際API
+        result = await recognizeFoodFromImage(files[0]);
+      }
+      
+      if (!result.success) {
+        throw new Error(result.error || '食材辨識失敗');
+      }
+      
+      console.log('辨識結果:', result.ingredients);
+      
+      // 將API返回的食材映射到本地數據
+      const recognizedIngredientIds = mapRecognizedIngredientsToLocal(
+        result.ingredients,
+        ingredients
+      );
+      
+      // 更新已選擇的食材
+      if (recognizedIngredientIds.length > 0) {
+        setSelectedIngredientIds(prev => [...new Set([...prev, ...recognizedIngredientIds])]);
+      } else {
+        // 如果沒有識別到任何食材，顯示提示
+        alert('未能識別任何食材，請嘗試拍攝更清晰的照片或手動選擇食材。');
+      }
+      
+    } catch (error) {
+      console.error('食材辨識API錯誤:', error);
+      alert('食材辨識失敗，請稍後再試或手動選擇食材。');
+      
+    } finally {
+      // 無論成功失敗都要執行的清理操作
       setShowCameraUpload(false);
       setProcessing(false);
       
@@ -70,7 +100,7 @@ const IngredientInputPage: React.FC = () => {
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
-    }, 1500);
+    }
   };
 
   // 獲取所有可用的食材分類
@@ -220,7 +250,7 @@ const IngredientInputPage: React.FC = () => {
                   拍攝冰箱或食材照片，AI 將自動辨識可見的食材，幫你節省輸入時間
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                  <label className="inline-flex items-center justify-center px-4 py-3 bg-cherry-500 text-white rounded-lg cursor-pointer hover:bg-cherry-600 transition-colors shadow-sm">
+                  <label className="inline-flex items-center justify-center px-4 py-3 bg-tangerine-500 text-white rounded-lg cursor-pointer hover:bg-tangerine-600 transition-colors shadow-sm">
                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                     </svg>
@@ -266,10 +296,10 @@ const IngredientInputPage: React.FC = () => {
       {selectedIngredientIds.length > 0 && (
         <div className="mb-8 bg-white p-5 rounded-lg shadow-sm border border-gray-100">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-lg font-medium">已選擇的食材 <span className="text-cherry-500">({selectedIngredientIds.length})</span></h2>
+            <h2 className="text-lg font-medium">已選擇的食材 <span className="text-tangerine-500">({selectedIngredientIds.length})</span></h2>
             <button
               onClick={() => setSelectedIngredientIds([])}
-              className="text-sm text-gray-500 hover:text-cherry-500 flex items-center"
+              className="text-sm text-gray-500 hover:text-tangerine-500 flex items-center"
             >
               <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -281,7 +311,7 @@ const IngredientInputPage: React.FC = () => {
             {selectedIngredients.map(ingredient => (
               <span
                 key={ingredient.id}
-                className="bg-cherry-50 text-cherry-700 text-sm px-3 py-1.5 rounded-full flex items-center border border-cherry-100"
+                className="bg-tangerine-50 text-tangerine-700 text-sm px-3 py-1.5 rounded-full flex items-center border border-tangerine-100"
               >
                 {ingredient.imageUrl && (
                   <img src={ingredient.imageUrl} alt={ingredient.name} className="w-4 h-4 rounded-full object-cover mr-1.5" />
@@ -289,7 +319,7 @@ const IngredientInputPage: React.FC = () => {
                 {ingredient.name}
                 <button
                   onClick={() => toggleIngredient(ingredient.id)}
-                  className="ml-1.5 text-cherry-400 hover:text-cherry-700 focus:outline-none"
+                  className="ml-1.5 text-tangerine-400 hover:text-tangerine-700 focus:outline-none"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -362,10 +392,10 @@ const IngredientInputPage: React.FC = () => {
         <button
           onClick={() => window.location.href = '#/recipe-recommend'}
           className={`
-            order-1 sm:order-2 px-6 py-3 rounded-full focus:outline-none focus:ring-2 focus:ring-cherry-500 flex items-center justify-center
+            order-1 sm:order-2 px-6 py-3 rounded-full focus:outline-none focus:ring-2 focus:ring-tangerine-500 flex items-center justify-center font-medium
             ${selectedIngredientIds.length === 0 
               ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
-              : 'bg-cherry-500 text-white hover:bg-cherry-600 shadow-sm transition-colors'}
+              : 'bg-tangerine-500 text-white hover:bg-tangerine-600 shadow-sm transition-colors'}
           `}
           disabled={selectedIngredientIds.length === 0}
         >
