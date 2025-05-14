@@ -277,10 +277,13 @@ const AppFooter = () => (
 )
 
 // 添加安裝按鈕
+// 將此組件註釋掉，因為不再使用
+/* 
 const AppInstallButton = () => {
   // 直接返回null，不顯示安裝按鈕
   return null;
 };
+*/
 
 // 主要應用元件
 function App() {
